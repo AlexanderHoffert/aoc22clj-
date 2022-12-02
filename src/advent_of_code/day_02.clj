@@ -11,11 +11,10 @@
 
 (def choice-score {"X" 1, "Y" 2, "Z" 3})
 
-(defn get-map-value [round the-map]
-  (get (get the-map (first round)) (second round)))
-
-(defn get-win-score [round]
-  (get-map-value round win-score))
+(defn get-map-value [a-map round]
+  (-> a-map
+      (get (first round))
+      (get (second round))))
 
 (defn parse-input [input]
   (->> input
@@ -24,7 +23,7 @@
 
 (defn get-value [round]
   (+ (get choice-score (second round))
-     (get-win-score round)))
+     (get-map-value win-score round)))
 
 (defn sum [rounds]
   (->> rounds
@@ -32,7 +31,7 @@
        (reduce +)))
 
 (defn map-round [round]
-  (list (first round) (get-map-value round correct-choice)))
+  (list (first round) (get-map-value correct-choice round)))
 
 (defn part-1
   "Day 02 Part 1"
