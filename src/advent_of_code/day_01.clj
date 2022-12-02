@@ -1,9 +1,6 @@
 (ns advent-of-code.day-01)
 (require '[clojure.string :as string])
 
-(defn read-input [input]
-  (string/split input #"\n"))
-
 (defn get-sums [food]
   (->> food
        (map #(Integer/parseInt %))
@@ -11,7 +8,7 @@
 
 (defn parse-input [input]
   (->> input
-       read-input
+       string/split-lines
        (partition-by #(= "" %))
        (filter #(not (= "" (first %))))
        (map get-sums)
