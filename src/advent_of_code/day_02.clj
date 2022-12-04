@@ -12,7 +12,8 @@
 (def choice-score {"X" 1, "Y" 2, "Z" 3})
 
 (defn parse-input [input]
-  (->> (string/split-lines input)
+  (->> input
+       string/split-lines
        (map #(string/split % #" "))))
 
 (defn get-score-of-round [round]
