@@ -1,7 +1,7 @@
 (ns advent-of-code.day-05
   (:require [clojure.string :as string]))
 
-(defn get-stacks [lines]
+(defn- get-stacks [lines]
   (->> lines
        (map #(re-seq #"(?:\[(\w)\])|(?:\s\s\s(?:\s|$))" %))
        (filter not-empty)
@@ -9,7 +9,7 @@
        (apply (partial map vector)) ;; transpose
        (mapv #(filter not-empty %))))
 
-(defn get-moves [lines]
+(defn- get-moves [lines]
   (->> lines
        (map #(re-find #"move (\d+) from (\d) to (\d)" %))
        (filter not-empty)
@@ -20,7 +20,7 @@
                    (#(assoc % :from (- (:from %) 1)))
                    (#(assoc % :to (- (:to %) 1))))))))
 
-(defn parse-input [input]
+(defn- parse-input [input]
   (->> input
        string/split-lines
        (#(hash-map :stacks (get-stacks %)
@@ -46,29 +46,28 @@
              (get (:to instruction))
              (#(concat move %)))))
 
-(defn rearrange [one-by-one stacks instruction]
+(defn- rearrange [one-by-one stacks instruction]
   (let [move (get-stack-to-move one-by-one instruction stacks)]
     (-> stacks
         (remove-from-stack instruction)
         (add-to-stack instruction move))))
 
-(defn rearrange-all [one-by-one input]
+(defn- rearrange-all [one-by-one input]
   (reduce (partial rearrange one-by-one) (:stacks input) (:procedure input)))
+
+(defn- get-result [input one-by-one]
+  (->> input
+       parse-input
+       (rearrange-all one-by-one)
+       (map first)
+       string/join))
 
 (defn part-1
   "Day 05 Part 1"
   [input]
-  (->> input
-       parse-input
-       (rearrange-all true)
-       (map first)
-       string/join))
+  (get-result input true))
 
 (defn part-2
   "Day 05 Part 2"
   [input]
-  (->> input
-       parse-input
-       (rearrange-all false)
-       (map first)
-       string/join))
+  (get-result input false))
