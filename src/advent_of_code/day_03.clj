@@ -5,7 +5,7 @@
 (def a-value (int \a))
 (def A-value (int \A))
 
-(defn parse-line [line]
+(defn parse-rucksack [line]
   (let [half (/ (count line) 2)]
     (vector
      (set (take half line))
@@ -14,7 +14,7 @@
 (defn parse-input1 [input]
   (->> input
        string/split-lines
-       (map parse-line)))
+       (map parse-rucksack)))
 
 (defn parse-input2 [input]
   (->> input
@@ -30,7 +30,7 @@
 
 (defn get-priority-of-rucksack [rucksack]
   (->> rucksack
-       (#(apply set/intersection %))
+       (apply set/intersection)
        first
        get-priority))
 
@@ -50,7 +50,3 @@
   (->> input
        parse-input2
        sum-priorities))
-
-(comment
-  (get-priority-of-rucksack [#{\a \b \c} #{\a \d}])
-  (sum-priorities '([#{\a \b \c} #{\a \d}])))
