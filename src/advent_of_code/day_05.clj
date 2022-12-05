@@ -26,18 +26,31 @@
        (#(hash-map :stacks (get-stacks %)
                    :procedure (get-moves %)))))
 
+(defn- get-stack-to-move [one-by-one instruction stacks]
+  (->> stacks
+       (#(get % (:from instruction)))
+       (take (:amount instruction))
+       (#(if one-by-one (reverse %) %))))
+
+(defn- remove-from-stack [stacks instruction]
+  (assoc stacks
+         (:from instruction)
+         (-> stacks
+             (get (:from instruction))
+             (#(drop (:amount instruction) %)))))
+
+(defn- add-to-stack [stacks instruction move]
+  (assoc stacks
+         (:to instruction)
+         (-> stacks
+             (get (:to instruction))
+             (#(concat move %)))))
+
 (defn rearrange [one-by-one stacks instruction]
-  (let [move (->> stacks
-                  (#(get % (:from instruction)))
-                  (take (:amount instruction))
-                  (#(if one-by-one (reverse %) %)))]
+  (let [move (get-stack-to-move one-by-one instruction stacks)]
     (-> stacks
-        (assoc (:from instruction) (-> stacks
-                                       (get (:from instruction))
-                                       (#(drop (:amount instruction) %))))
-        (assoc (:to instruction) (-> stacks
-                                     (get (:to instruction))
-                                     (#(concat move %)))))))
+        (remove-from-stack instruction)
+        (add-to-stack instruction move))))
 
 (defn rearrange-all [one-by-one input]
   (reduce (partial rearrange one-by-one) (:stacks input) (:procedure input)))
